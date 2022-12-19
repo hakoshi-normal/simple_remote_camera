@@ -2,9 +2,9 @@ import base64
 from socket import socket, AF_INET, SOCK_DGRAM
 import cv2
 
-def cv_to_base64(img):
+def cv_to_base85(img):
     _, encoded = cv2.imencode(".jpg", img)
-    img_str = base64.b64encode(encoded).decode("ascii")
+    img_str = base64.b85encode(encoded).decode("ascii")
     return img_str
 
 cap = cv2.VideoCapture(0)
@@ -16,7 +16,7 @@ sock = socket(AF_INET, SOCK_DGRAM)
 while True:
     ret, frame = cap.read()
     frame = cv2.resize(frame, dsize=(240, 320))   # フレーム圧縮（ネットワーク制限対策）
-    img_str = cv_to_base64(frame)
+    img_str = cv_to_base85(frame)
     sock.sendto(img_str.encode(), (ADDRESS, PORT))
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
